@@ -8,6 +8,15 @@ import moment from 'moment';
 import axios from 'axios';
 import { Helmet } from "react-helmet";
 import { Link } from 'react-router-dom';
+import { Dialog } from '@material-ui/core';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import Slide from '@mui/material/Slide';
+import { Button } from '@mui/material';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 	useEffect(() => {
@@ -17,6 +26,8 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 
 	const [totalTickets, setTotalTickets] = useState(0);
 	const [completedTask, setCompletedTask] = useState(0);
+	const [open, setOpen] = useState(false)
+	const [component, setComponent] = useState('project')
 
 	const localStorageData = localStorage.getItem('redwing_data');
 
@@ -121,58 +132,91 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 			};
 		});
 	}, [timer]);
-	return (
-		<>
-		<div className={styles.bigdashboard}>
-			<Helmet>
-				<meta name="apple-mobile-web-app-capable" content="yes" />
-			</Helmet>
-			{
-				topStatisticsCount.hoursOfWeek !== 0 && (<div className={styles.activity}>
-					<div className={styles.outertopStatisticsBar}>
-						<div className={styles.topStatisticsBar}>
-							<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
-							<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
-						</div>
-					</div>
-					<div className={styles.alignActivitiesContent}>
-						<ActivitiesColumn
-							setTopStatisticsCount={setTopStatisticsCount}
-							setSelectedProject={setSelectedProject}
-							selectedProject={selectedProject}
-						/>
-					</div>
-				</div>)
-			}
-			<div className={styles.project}>
-				<div className={styles.outertopStatisticsBar}>
-					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Worth Orders'} count={topStatisticsCount.worthOrders} />
-					</div>
-				</div>
-				<div className={styles.alignProjectsContent}>
-					<ProjectsColumn setTopStatisticsCount={setTopStatisticsCount} />
+
+	const activity = (
+		<div className={styles.activity}>
+			<div className={styles.outertopStatisticsBar}>
+				<div className={styles.topStatisticsBar}>
+					<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
+					<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
+					<Button onClick={() => {
+						setComponent('activity')
+						setOpen(state => !state)
+					}}> {open === false ?<OpenInFullIcon sx={{color: '#0b595f'}}/> : <CloseFullscreenIcon sx={{color: '#0b595f'}}/>}</Button>
 				</div>
 			</div>
-			<div className={styles.teamWork}>
-				<div className={styles.outertopStatisticsBar}>
-					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Tasks Today'} count={topStatisticsCount.tasksToday} />
-						<TopStatistics text={'Team Load'} count={totalTickets} />
-						<TopStatistics text={'Completions'} count={completedTask} />
-					</div>
-				</div>
-				<div className={styles.alignTeamContent}>
-					<TeamWork
-						isInverted={false}
-						screenIndex={2}
-						showTeamTabTop={false}
-						showTabComponent={false}
-						showActionButtons={false}
-					/>
-				</div>
+			<div className={styles.alignActivitiesContent}>
+				<ActivitiesColumn
+					setTopStatisticsCount={setTopStatisticsCount}
+					setSelectedProject={setSelectedProject}
+					selectedProject={selectedProject}
+				/>
 			</div>
 		</div>
+	)
+
+	const project = (
+		<div className={styles.project}>
+			<div className={styles.outertopStatisticsBar}>
+				<div className={styles.topStatisticsBar}>
+					<TopStatistics text={'Worth Orders'} count={topStatisticsCount.worthOrders} />
+					<Button onClick={() => {
+						setComponent('project')
+						setOpen(state => !state)
+					}}> {open === false ?<OpenInFullIcon sx={{color: '#6b1b55'}}/> : <CloseFullscreenIcon sx={{color: '#6b1b55'}}/>}</Button>
+				</div>
+			</div>
+			<div className={styles.alignProjectsContent}>
+				<ProjectsColumn setTopStatisticsCount={setTopStatisticsCount} />
+			</div>
+		</div>
+	)
+
+	const team = (
+		<div className={styles.teamWork}>
+			<div className={styles.outertopStatisticsBar}>
+				<div className={styles.topStatisticsBar}>
+					<TopStatistics text={'Tasks Today'} count={topStatisticsCount.tasksToday} />
+					<TopStatistics text={'Team Load'} count={totalTickets} />
+					<TopStatistics text={'Completions'} count={completedTask} />
+					<Button onClick={() => {
+						setComponent('team')
+						setOpen(state => !state)
+					}}> {open === false ?<OpenInFullIcon sx={{color: '#251f77'}} /> : <CloseFullscreenIcon sx={{color: '#251f77'}}/>}</Button>
+				</div>
+			</div>
+			<div className={styles.alignTeamContent}>
+				<TeamWork
+					isInverted={false}
+					screenIndex={2}
+					showTeamTabTop={false}
+					showTabComponent={false}
+					showActionButtons={false}
+				/>
+			</div>
+		</div>
+	)
+	return (
+		<>
+			<Dialog
+				fullScreen
+				open={open}
+				onClose={() => setOpen(false)}
+				TransitionComponent={Transition}
+			>
+				{
+					component === 'team' ? team : component === 'activity' ? activity : project
+				}
+			</Dialog>
+			<div className={styles.bigdashboard}>
+				<Helmet>
+					<meta name="apple-mobile-web-app-capable" content="yes" />
+				</Helmet>
+
+				{topStatisticsCount.hoursOfWeek !== 0 && activity}
+				{project}
+				{team}
+			</div>
 			<div className="big-dashboard-footer" style={{ margin: "1rem" }}>
 				<Link to='/homepage' onClick={scrollTop}>Go to Homepage</Link>
 			</div></>
