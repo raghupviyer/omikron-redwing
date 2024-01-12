@@ -11,7 +11,7 @@
 	display: grid;
 	font-family: Poppins;
 	line-height: 21px;
-	grid-template-columns: 2fr 1fr 1.3fr;
+	grid-template-columns: 2fr fit-content(25vw) 1.3fr;
 	grid-template-rows: 1fr;
 	grid-template-areas: 'a b c';
 	overflow-y: hidden;

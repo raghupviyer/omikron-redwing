@@ -6,7 +6,7 @@ import ProjectsColumn from './ProjectsColumn';
 import ActivitiesColumn from './ActivitiesColumn';
 import moment from 'moment';
 import axios from 'axios';
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 import { Link } from 'react-router-dom';
 
 const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
@@ -31,8 +31,8 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 		localStorage.getItem('redwing_data') ? JSON.parse(localStorageData).projects : []
 	);
 
-	const scrollTop=()=>{
-		window.scrollTo({top:0,behaviour:'smooth'})
+	const scrollTop = () => {
+		window.scrollTo({ top: 0, behaviour: 'smooth' })
 	}
 
 	useEffect(() => {
@@ -41,7 +41,7 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 			const totalTasks = teamMembers.reduce((acc, user) => {
 				return acc + user.tasks_count;
 			}, 0);
-			if(totalTasks !== totalTickets){
+			if (totalTasks !== totalTickets) {
 				setTotalTickets(totalTasks);
 				setTopStatisticsCount(prev => {
 					return {
@@ -54,12 +54,12 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 	}, [allusers]);
 
 	useEffect(() => {
-		if(allusers.users) {
+		if (allusers.users) {
 			const teamMembers = allusers.users.filter(user => user.user_id !== 33629907);
-			const totalCompleteTask  = teamMembers.reduce((acc,user) => {
+			const totalCompleteTask = teamMembers.reduce((acc, user) => {
 				return acc + user.completed_todo;
-			},0);
-			if(totalCompleteTask !== completedTask){
+			}, 0);
+			if (totalCompleteTask !== completedTask) {
 				setCompletedTask(totalCompleteTask);
 				setTopStatisticsCount(prev => {
 					return {
@@ -69,7 +69,7 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 				});
 			}
 		}
-	},[allusers]);
+	}, [allusers]);
 
 	const getTeamWorkData = () => {
 		// setLoading(true);
@@ -94,14 +94,14 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 			});
 	};
 
-	useEffect(()=>{
-		setTopStatisticsCount(()=>{
+	useEffect(() => {
+		setTopStatisticsCount(() => {
 			return {
 				...topStatisticsCount,
 				tasksToday: data.tickets_created_today
 			};
 		});
-	},[data]);
+	}, [data]);
 
 	const [topStatisticsCount, setTopStatisticsCount] = useState({
 		hoursOfWeek: 0,
@@ -122,25 +122,28 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 		});
 	}, [timer]);
 	return (
+		<>
 		<div className={styles.bigdashboard}>
 			<Helmet>
 				<meta name="apple-mobile-web-app-capable" content="yes" />
 			</Helmet>
-			<div className={styles.activity}>
-				<div className={styles.outertopStatisticsBar}>
-					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
-						<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
+			{
+				topStatisticsCount.hoursOfWeek !== 0 && (<div className={styles.activity}>
+					<div className={styles.outertopStatisticsBar}>
+						<div className={styles.topStatisticsBar}>
+							<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
+							<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
+						</div>
 					</div>
-				</div>
-				<div className={styles.alignActivitiesContent}>
-					<ActivitiesColumn
-						setTopStatisticsCount={setTopStatisticsCount}
-						setSelectedProject={setSelectedProject}
-						selectedProject={selectedProject}
-					/>
-				</div>
-			</div>
+					<div className={styles.alignActivitiesContent}>
+						<ActivitiesColumn
+							setTopStatisticsCount={setTopStatisticsCount}
+							setSelectedProject={setSelectedProject}
+							selectedProject={selectedProject}
+						/>
+					</div>
+				</div>)
+			}
 			<div className={styles.project}>
 				<div className={styles.outertopStatisticsBar}>
 					<div className={styles.topStatisticsBar}>
@@ -169,10 +172,10 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 					/>
 				</div>
 			</div>
-			<div className="big-dashboard-footer" style={{margin:"1rem"}}>
-				<Link to='/homepage'onClick={scrollTop}>Go to Homepage</Link>
-			</div>
 		</div>
+			<div className="big-dashboard-footer" style={{ margin: "1rem" }}>
+				<Link to='/homepage' onClick={scrollTop}>Go to Homepage</Link>
+			</div></>
 	);
 };
 
