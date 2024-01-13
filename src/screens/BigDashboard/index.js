@@ -179,6 +179,7 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 					<TopStatistics text={'Tasks Today'} count={topStatisticsCount.tasksToday} />
 					<TopStatistics text={'Team Load'} count={totalTickets} />
 					<TopStatistics text={'Completions'} count={completedTask} />
+					<TopStatistics text={'Sleeping'} count={data.sleeping_tasks}/>
 					<Button onClick={() => {
 						setComponent('team')
 						setOpen(state => !state)
