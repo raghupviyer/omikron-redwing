@@ -77,7 +77,7 @@ const TeamWork = ({
 	}, []);
 
 	const sorting = (col, sortingOrder1) => {
-		if (col === 'tasks_count' || col === 'active_count') {
+		if (col === 'tasks_count' || col === 'active_count' || col === 'completed_todo') {
 			if (sortingOrder1 === 'ASC') {
 				const sorted = [...users].sort((a, b) => (a[col] < b[col] ? 1 : -1));
 
@@ -327,11 +327,11 @@ const TeamWork = ({
 						<th
 							onClick={e => {
 								e.preventDefault();
-								setSortingColumn('active_count');
+								setSortingColumn('completed_todo');
 								if (sortingOrder === 'ASC') {
-									sorting('active_count', 'ASC');
+									sorting('completed_todo', 'ASC');
 								} else {
-									sorting('active_count', 'DEC');
+									sorting('completed_todo', 'DEC');
 								}
 							}}
 							style={{
